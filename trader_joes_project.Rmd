@@ -13,15 +13,6 @@ library(plotly)
 # Zachary Etzioni
 ```
 
-## Due Dec 6 2024 (Friday) 11:59 PM.
-
-- Submission: Please submit both the Rmarkdown file and the output .html file. The ChatGPT survey is included in this .Rmd file. Points will be deducted for dishonesty or lack of response to the ChatGPT survey.
-```{r}
-options(repos = c(CRAN = "https://cran.r-project.org"))
-
-```
-
-
 ```{r}
 
 install.packages("usdata")
@@ -74,11 +65,6 @@ Use ggplotly for an interactive graphic.
 ggplotly(pp)
 ```
 
-
-
-#### YOUR TURN 2. 
-Previously, we plotted the Trader Joe's locations using a scatter plot. Now, we will manipulate the TJ data in order to represent the number of TJs in each state with varying sizes of the geom_point. To achieve this, we need to summarize the tj data at the state level.
-
 [1] Create summary statistics of the tj data, using the *average* of latitudes and longitudes, and *the number of locations (count)* in a given *state*.  
 This data frame will have four columns, *state*, *(avg)latitude*, *(avg)longitude*, and  *count*. Save this object as *tj_new*.
 
@@ -99,12 +85,9 @@ print(tj_new)
 ```
 
 
-
 [2] Next, we will plot this tj_new on top of the state map. When plotting the new data, we will use geom_point and represent the number of locations (count) in each state with varying sizes of dots.
 
-Question [2]
 ```{r}
-#tuesday lecture note -  line 102-119 +  line 183-190 
 
 
 states_map <- map_data("state")
@@ -126,12 +109,7 @@ ggplot() +
 ```
 
 
-
-#### YOUR TURN 3.
-
 Lastly, we will join the state map data with the tj_new dataset. The key variable for joining these two datasets is ???.  After merging, the state map data will include an additional variable representing the number of Trader Joe's locations in each state. 
-
-To ensure the join works correctly, the values under each key variable must match. Currently, they do not align. Therefore, we need to convert the values so that the key variable in both datasets is consistent.
 
  
 ```{r}
@@ -151,8 +129,7 @@ states_tj <-states %>%
 #states_tj is now the new map data with an additional variable - `count` var, the number of Tj locations.
 ```
 
-
-Question [1]: Plot the *states_tj* map data, and represent the number of Trader Joe's locations within a state with varying polygon colors. You can achieve this by mapping the XXXX variable to the fill aesthetic attribute.
+Plot the *states_tj* map data, and represent the number of Trader Joe's locations within a state with varying polygon colors. You can achieve this by mapping the XXXX variable to the fill aesthetic attribute.
 
 ```{r}
 ggplot(states_tj, aes(long, lat, group = group, fill = count)) +
@@ -163,17 +140,3 @@ ggplot(states_tj, aes(long, lat, group = group, fill = count)) +
 
 
 ```
-### ChatGPT Survey 
-
-#### Question 1. Please indicate below whether you sought assistance from ChatGPT for your weekly assignment.
->  NO
-
-
-#### Question 2. If YES, describe the questions you posed to ChatGPT and the responses you received.
-
-> N/A
-
-
-#### Question 3. Describe any modifications or original contributions you added to the ChatGPT-generated answers to complete the assignment.
-
-> N/A
