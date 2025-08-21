@@ -1,0 +1,179 @@
+---
+title: "QTM 150 Assignment 11"
+author: "Leave the author field empty. This is for anonymous grading."
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(maps)
+library(tidyverse)
+library(nycflights13)
+library(plotly)
+# Zachary Etzioni
+```
+
+## Due Dec 6 2024 (Friday) 11:59 PM.
+
+- Submission: Please submit both the Rmarkdown file and the output .html file. The ChatGPT survey is included in this .Rmd file. Points will be deducted for dishonesty or lack of response to the ChatGPT survey.
+```{r}
+options(repos = c(CRAN = "https://cran.r-project.org"))
+
+```
+
+
+```{r}
+
+install.packages("usdata")
+library(tidyverse)
+library(plotly)
+library(maps)
+library(usdata)
+```
+```{r}
+state_names <- c("California", "Texas", "New York")
+state_abbreviations <- usdata::state2abbr(state_names)
+print(state_abbreviations)
+```
+
+# maps (5pts)
+
+```{r}
+states<-map_data("state")
+county<-map_data("county")
+tj <-read.csv("tj-locations.csv") # A comprehensive dataset of Trader Joe's locations in the US, consisting of latitude and longitude coordinates for each location, is sourced from kaggle.com.
+```
+
+
+#### YOUR TURN 1. 
+
+Question [1] Plot the state map and overlay it with the county map. Then, add the Trader Joe's locations with geom_point on the map. (entire us state and county map)
+
+```{r}
+#tuesday lecture note -  line 102-119 + line 183-190 
+
+pp <- ggplot() +
+  geom_polygon(data = states, aes(x = long, y = lat, group = group), 
+               color = "black", fill = "white", size = 0.5) +
+  geom_polygon(data = county, aes(x = long, y = lat, group = group), 
+               color = "gray70", fill = NA, size = 0.2) +
+  geom_point(data = tj, aes(x = longitude, y = latitude), 
+             color = "red", size = 2, alpha = 0.7) +
+  labs(title = "Trader Joe's Locations Across the United States", 
+       x = "Longitude", y = "Latitude") +
+  theme_minimal() +
+  coord_fixed(1.2)
+
+pp
+```
+
+
+Use ggplotly for an interactive graphic. 
+
+```{r}
+ggplotly(pp)
+```
+
+
+
+#### YOUR TURN 2. 
+Previously, we plotted the Trader Joe's locations using a scatter plot. Now, we will manipulate the TJ data in order to represent the number of TJs in each state with varying sizes of the geom_point. To achieve this, we need to summarize the tj data at the state level.
+
+[1] Create summary statistics of the tj data, using the *average* of latitudes and longitudes, and *the number of locations (count)* in a given *state*.  
+This data frame will have four columns, *state*, *(avg)latitude*, *(avg)longitude*, and  *count*. Save this object as *tj_new*.
+
+
+Question [1]
+
+```{r}
+tj_new <- tj %>%
+  group_by(state) %>%
+  summarise(
+    latitude = mean(latitude, na.rm = TRUE),  
+    longitude = mean(longitude, na.rm = TRUE), 
+    count = n()                               
+  )
+
+print(tj_new)
+
+```
+
+
+
+[2] Next, we will plot this tj_new on top of the state map. When plotting the new data, we will use geom_point and represent the number of locations (count) in each state with varying sizes of dots.
+
+Question [2]
+```{r}
+#tuesday lecture note -  line 102-119 +  line 183-190 
+
+
+states_map <- map_data("state")
+
+ggplot() +
+  geom_polygon(data = states_map, aes(x = long, y = lat, group = group), 
+               color = "black", fill = "white", size = 0.5) +
+  geom_point(data = tj_new, aes(x = longitude, y = latitude, size = count), 
+             color = "blue", alpha = 0.7) +
+  scale_size_continuous(range = c(2, 10), name = "Number of Locations") +
+  labs(title = "Trader Joe's Locations Across the United States", 
+       subtitle = "Dot size represents the number of locations in each state", 
+       x = "Longitude", y = "Latitude") +
+  theme_minimal() +
+  coord_fixed(1.2)
+
+
+
+```
+
+
+
+#### YOUR TURN 3.
+
+Lastly, we will join the state map data with the tj_new dataset. The key variable for joining these two datasets is ???.  After merging, the state map data will include an additional variable representing the number of Trader Joe's locations in each state. 
+
+To ensure the join works correctly, the values under each key variable must match. Currently, they do not align. Therefore, we need to convert the values so that the key variable in both datasets is consistent.
+
+ 
+```{r}
+tj_new<-tj_new%>%
+  mutate(state=abbr2state(state)) %>% # abbr -> full state name
+  mutate(state=tolower(state)) 
+# convert it to lower case to align with the values in map dataset
+```
+
+
+Join the state map data with tj_new dataset.
+
+```{r}
+states_tj <-states %>% 
+  left_join(tj_new, by=c("region"="state"))
+
+#states_tj is now the new map data with an additional variable - `count` var, the number of Tj locations.
+```
+
+
+Question [1]: Plot the *states_tj* map data, and represent the number of Trader Joe's locations within a state with varying polygon colors. You can achieve this by mapping the XXXX variable to the fill aesthetic attribute.
+
+```{r}
+ggplot(states_tj, aes(long, lat, group = group, fill = count)) +
+  geom_polygon(color = "black") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = "grey90") +
+  theme_minimal() +
+  coord_fixed(1.2)
+
+
+```
+### ChatGPT Survey 
+
+#### Question 1. Please indicate below whether you sought assistance from ChatGPT for your weekly assignment.
+>  NO
+
+
+#### Question 2. If YES, describe the questions you posed to ChatGPT and the responses you received.
+
+> N/A
+
+
+#### Question 3. Describe any modifications or original contributions you added to the ChatGPT-generated answers to complete the assignment.
+
+> N/A
